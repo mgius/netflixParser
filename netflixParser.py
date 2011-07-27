@@ -5,6 +5,8 @@ import datetime
 import re
 import sys
 
+import netflix
+
 DATA = []
 
 def parseDate(dateString):
@@ -18,9 +20,8 @@ def parseDate(dateString):
         year = '20' + year
     return datetime.date(int(year), int(month), int(day))
 
-def parseData(filename):
-    historyFile = open(filename)
-    historyFileData = historyFile.read()
+def parseData(data):
+    historyFileData = data.read()
 
     tablePattern = re.compile('(?P<tableData><table>.*?</table>)', re.DOTALL)
     try:
@@ -70,5 +71,11 @@ def parseData(filename):
 #               matches \
 #               if cutoff_date < parseDate(match['date'])])
     
+EMAIL='yourEmailHere'
+PASSWORD='yourPasswordHere'
 if __name__ == '__main__':
-    parseData(sys.argv[1])
+    n = netflix.NetflixData(EMAIL, PASSWORD)
+    n.login()
+    data = n.get_viewing_activity()
+
+    parseData(data)
