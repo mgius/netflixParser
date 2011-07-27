@@ -1,8 +1,8 @@
 # How to use
 
-Edit netflixParser.py for your email and password
-
-$ python netflixParser.py
+> cp config.example config
+> vim config
+> python main.py
 
 ## TODO
 

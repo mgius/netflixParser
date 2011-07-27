@@ -3,7 +3,7 @@ import datetime
 import re
 import sys
 
-DATA = []
+from netflix import data as n_data
 
 
 def parseDate(dateString):
@@ -17,7 +17,9 @@ def parseDate(dateString):
         year = '20' + year
     return datetime.date(int(year), int(month), int(day))
 
+
 def parseData(data):
+    ''' Parses html data and returns a NetflixData object '''
     historyFileData = data.read()
 
     tablePattern = re.compile('(?P<tableData><table>.*?</table>)', re.DOTALL)
@@ -36,23 +38,11 @@ def parseData(data):
     matches = [match.groupdict() for match in \
                rowPatternCompiled.finditer(tableData)]
 
-    month_data = dict([(month, 0) for month in calendar.month_name[1:]])
-    day_data = dict([(day, 0) for day in calendar.day_name])
-
+    data = n_data.NetflixData()
+    data_add_viewing = data.add_viewing
     for match in matches:
         date = parseDate(match['date'])
         time_watched = int(match['time_watched'])
-        month_data[calendar.month_name[date.month]] += time_watched
-        day_data[calendar.day_name[date.weekday()]] += time_watched
-    
-    for month in calendar.month_name[1:]:
-        print "%s: %d:%02d" % (month, 
-                               month_data[month] // 60, 
-                               month_data[month] % 60)
-    print ""
+        data_add_viewing(date, time_watched)
 
-    for day in calendar.day_name:
-        print "%s: %d:%02d" % (day, 
-                               day_data[day] // 60, 
-                               day_data[day] % 60)
-
+    return data
