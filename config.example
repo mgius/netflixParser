@@ -1,0 +1,4 @@
+rename this file to config and fill in with your information
+[netflix_parser]
+email = youremail@email.com
+password = yourpassword

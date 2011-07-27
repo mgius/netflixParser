@@ -4,7 +4,7 @@ import urllib2
 
 from cookielib import CookieJar, DefaultCookiePolicy
 
-class NetflixData(object):
+class NetflixConnection(object):
     login_url = 'https://www.netflix.com/Login'
     viewing_activity_url = 'https://account.netflix.com/WiViewingActivity'
     cookie_policy = \
