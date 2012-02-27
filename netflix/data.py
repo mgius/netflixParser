@@ -11,38 +11,72 @@ def init_year():
 class NetflixData(object):
     def __init__(self):
         self.master_data = collections.defaultdict(int)
-        self.month_data = init_year()
-        self.month_year_data = {}
-        self.dow_data = dict([(day, 0) for day in
-                              calendar.day_name])
 
     def add_viewing(self, date, time_viewed):
         self.master_data[date] += time_viewed
-        if date.year not in self.month_year_data:
-            self.month_year_data[date.year] = init_year()
-        self.month_year_data[date.year][calendar.month_name[date.month]] += \
-                time_viewed
-        self.month_data[calendar.month_name[date.month]] += time_viewed
-        self.dow_data[calendar.day_name[date.weekday()]] += time_viewed
+
+    def viewings_by_month(self):
+        month_data = {}
+        for date, time_viewed in self.master_data.iteritems():
+            if date.year not in month_data:
+                month_data[date.year] = init_year()
+
+            year_dict = month_data[date.year]
+            year_dict[calendar.month_name[date.month]] += time_viewed
+
+        return month_data
+
+    def viewings_by_dow(self):
+        dow_data = dict([(day, 0) for day in
+                              calendar.day_name])
+
+        for date, time_viewed in self.master_data.iteritems():
+            dow_data[calendar.day_name[date.weekday()]] += time_viewed
+
+        return dow_data
+
+# don't currently have time of day info
+#    def viewings_by_time_of_day(self):
+#        tod_data = collections.defaultdict(int)
+#
+#        for date, time_viewed in self.master_data.iteritems():
+#            tod_data[date.hour % 24 // 6]
+#
+#        return dict(latenight=tod_data[0],
+#                    morning=tod_data[1],
+#                    afternoon=tod_data[2],
+#                    evening=tod_data[3])
 
     def text_tables(self):
         out_list = []
-        for year in self.month_year_data:
+
+        month_data = self.viewings_by_month()
+        for year in month_data:
             for month in calendar.month_name[1:]:
+                if month_data[year][month] == 0:
+                    continue
                 out_list.append(
                 "%s %d: %d:%02d" % (month, year,
-                                  self.month_year_data[year][month] // 60,
-                                  self.month_year_data[year][month] % 60))
+                                  month_data[year][month] // 60,
+                                  month_data[year][month] % 60))
 
         month_text = '\n'.join(out_list)
 
+        dow_data = self.viewings_by_dow()
         dow_text = '\n'.join(
                 ["%s: %d:%02d" % (day,
-                                  self.dow_data[day] // 60,
-                                  self.dow_data[day] % 60)
+                                  dow_data[day] // 60,
+                                  dow_data[day] % 60)
+
                  for day in calendar.day_name])
 
-        return '\n\n'.join([month_text, dow_text])
+        total_time = sum(self.master_data.values())
+        total_days = total_time // (24 * 60)
+        partial_day = total_time - (total_days * 24 * 60)
+        total = "Total Time: %d days, %d:%02d hours" % (
+                    total_days, partial_day // 60, partial_day % 60)
+
+        return '\n\n'.join([month_text, dow_text, total])
 
     def all_data(self):
         keys = self.master_data.keys()
