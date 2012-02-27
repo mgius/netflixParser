@@ -35,6 +35,16 @@ class NetflixData(object):
 
         return dow_data
 
+    def active_days(self, hour_threshold=8):
+        active_days = {}
+
+        for date, time_watched in self.master_data.iteritems():
+            if time_watched >= hour_threshold * 60:
+                active_days[date] = time_watched
+
+        return active_days
+
+
 # don't currently have time of day info
 #    def viewings_by_time_of_day(self):
 #        tod_data = collections.defaultdict(int)
@@ -73,10 +83,23 @@ class NetflixData(object):
         total_time = sum(self.master_data.values())
         total_days = total_time // (24 * 60)
         partial_day = total_time - (total_days * 24 * 60)
-        total = "Total Time: %d days, %d:%02d hours" % (
+        total_text = "Total Time: %d days, %d:%02d hours" % (
                     total_days, partial_day // 60, partial_day % 60)
 
-        return '\n\n'.join([month_text, dow_text, total])
+        return '\n\n'.join([month_text, dow_text, total_text])
+
+    def unusual_days(self):
+        active_days = self.active_days()
+
+        active_table = '\n'.join(
+                ["%s: %d:%02d" % (day, time_viewed // 60, time_viewed % 60)
+                 for day, time_viewed in active_days.iteritems()])
+
+        active_text = '\n'.join(("Wow, you watched a lot of netflix on "
+                                "these days:\n",
+                                active_table))
+
+        return '\n\n'.join([active_text])
 
     def all_data(self):
         keys = self.master_data.keys()

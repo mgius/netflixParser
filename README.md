@@ -8,3 +8,4 @@
 
 * Output based on Week of Month, Day of Month
 * Pretty html output of a calendar
+* proper sorting of text output

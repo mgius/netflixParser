@@ -25,6 +25,7 @@ def main_cached():
         n_data = pickle.load(f)
 
     print n_data.text_tables()
+    print n_data.unusual_days()
 
 if __name__ == '__main__':
     main()
