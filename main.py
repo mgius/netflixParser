@@ -16,11 +16,15 @@ def main():
     viewing_data = n_conn.get_viewing_activity()
 
     n_data = n_parser.parseData(viewing_data)
-    #print n_data.text_tables()
-    #print n_data.all_data()
+    print n_data.text_tables()
     with open('data.pickle', 'w') as f:
         pickle.dump(n_data, f)
-    n_data.line_plot()
+
+def main_cached():
+    with open('data.pickle', 'r') as f:
+        n_data = pickle.load(f)
+
+    print n_data.text_tables()
 
 if __name__ == '__main__':
     main()
