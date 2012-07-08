@@ -17,6 +17,7 @@ def main():
 
     n_data = n_parser.parseData(viewing_data)
     print n_data.text_tables()
+    print n_data.unusual_days()
     with open('data.pickle', 'w') as f:
         pickle.dump(n_data, f)
 

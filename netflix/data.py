@@ -93,7 +93,7 @@ class NetflixData(object):
 
         active_table = '\n'.join(
                 ["%s: %d:%02d" % (day, time_viewed // 60, time_viewed % 60)
-                 for day, time_viewed in active_days.iteritems()])
+                 for day, time_viewed in sorted(active_days.iteritems())])
 
         active_text = '\n'.join(("Wow, you watched a lot of netflix on "
                                 "these days:\n",
